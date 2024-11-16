@@ -89,10 +89,12 @@ Documentation for creating custom plugins will be available soon. Plugins can be
 
 ### Extension Popup
 ![Extension Popup](screenshots/popup.png)
+
 *The main popup interface showing the server URL configuration and current page data*
 
 ### Obsidian Integration
 ![Obsidian Integration](screenshots/obsidian.png)
+
 *How the captured data appears in your Obsidian daily notes*
 
 ## Contributing
