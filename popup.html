@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>URL Sender Settings</title>
+  <style>
+    body {
+      width: 350px;
+      padding: 10px;
+      font-family: Arial, sans-serif;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input[type="url"], input[type="text"] {
+      width: 100%;
+      padding: 5px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+    .header-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 5px;
+    }
+    .header-row input {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    .header-actions {
+      display: flex;
+      gap: 5px;
+      margin: 10px 0;
+    }
+    .button-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    button {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      color: white;
+    }
+    #save {
+      background-color: #4CAF50;
+      flex: 1;
+    }
+    #save:hover {
+      background-color: #45a049;
+    }
+    #sendUrl {
+      background-color: #2196F3;
+      flex: 1;
+    }
+    #sendUrl:hover {
+      background-color: #0b7dda;
+    }
+    button.remove {
+      background-color: #f44336;
+      padding: 4px 8px;
+    }
+    button.remove:hover {
+      background-color: #da190b;
+    }
+    button.add {
+      background-color: #2196F3;
+    }
+    button.add:hover {
+      background-color: #0b7dda;
+    }
+    #status {
+      margin-top: 10px;
+      padding: 5px;
+      display: none;
+    }
+    .success {
+      color: green;
+    }
+    .error {
+      color: red;
+    }
+    #headers-container {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-group">
+    <label for="serverUrl">Remote Server URL:</label>
+    <input type="url" id="serverUrl" placeholder="https://your-server.com/endpoint" required>
+  </div>
+  
+  <div class="form-group">
+    <label for="tags">Tags (comma-separated):</label>
+    <input type="text" id="tags" placeholder="tag1, tag2, tag3">
+  </div>
+  
+  <div class="form-group">
+    <label>Custom Headers:</label>
+    <div id="headers-container"></div>
+    <div class="header-actions">
+      <button id="addHeader" class="add">Add Header</button>
+    </div>
+  </div>
+
+  <div class="button-container">
+    <button id="save">Save Settings</button>
+    <button id="sendUrl">Send URL</button>
+  </div>
+  <div id="status"></div>
+  <script src="popup.js"></script>
+</body>
+</html>
