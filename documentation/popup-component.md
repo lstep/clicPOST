@@ -16,12 +16,21 @@ This component manages user settings persistence, dynamic header configuration, 
 ```javascript
 // Example tags for categorization
 tags: "important, work, research"
+
+// AI-generated descriptions
+// If AI Remote URL is configured in options, a "Generate description" button will appear
 ```
 
 ### Accessing Options
 1. Click "Settings" button to open the options page
-2. Configure server URL and custom headers in the options page
+2. Configure server URL, AI Remote URL, and custom headers in the options page
 3. Settings are saved through the options page
+
+### Using AI Description Generation
+1. Configure AI Remote URL in the options page
+2. The "Generate description" button will appear in the popup (between "Send URL" and "Settings")
+3. Click the button to send the current page data to the AI service
+4. The generated description will automatically populate the description field
 
 ## API / Props / Parameters
 
@@ -33,7 +42,12 @@ tags: "important, work, research"
 **Returns**: None
 **Usage**: Called when Enter key is pressed in tags input
 
-
+#### `generateDescription()`
+**Purpose**: Sends the current page data to the AI service to generate a description
+**Parameters**: None
+**Returns**: None
+**Usage**: Called when the "Generate description" button is clicked
+**Visibility**: Button only appears when AI Remote URL is configured
 
 #### `showStatus(message, type)`
 **Purpose**: Displays status messages to the user
@@ -51,8 +65,7 @@ tags: "important, work, research"
   tags: string         // Comma-separated tags
 }
 
-// Server URL and headers are now configured in the options page
-```
+// Server URL, AI Remote URL, and headers are now configured in the options page
 ```
 
 #### Send Data Payload
@@ -61,7 +74,17 @@ tags: "important, work, research"
   url: string,         // Current tab URL
   title: string,       // Page title
   selected: string,    // Selected text (if any)
-  tags: string        // User-defined tags
+  description: string, // User-defined or AI-generated description
+  tags: string,        // User-defined tags
+  generate_description: boolean // Only present for AI description generation requests
+}
+```
+
+#### AI Response Format
+```javascript
+{
+  generated_description: string // The AI-generated description text
+  // Other fields may be present but are not used
 }
 ```
 
@@ -74,8 +97,11 @@ popup.js (Streamlined Interface)
 ├── Chrome Scripting API (Content Script Injection)
 ├── Chrome Runtime API (Options Page Access)
 └── DOM Manipulation
+    ├── Description Input
     ├── Tags Input
-    ├── Send Button
+    ├── Send URL Button
+    ├── Generate Description Button (conditional)
+    ├── Settings Button
     └── Status Display
 ```
 
@@ -84,6 +110,7 @@ popup.js (Streamlined Interface)
 ### Persistent State (Chrome Storage)
 - **tags**: Tag string in `chrome.storage.sync`
 - **serverUrl**: Managed by options page, accessed from `chrome.storage.sync`
+- **aiRemoteUrl**: Managed by options page, accessed from `chrome.storage.sync`
 - **headers**: Managed by options page, accessed from `chrome.storage.sync`
 
 ### Transient State (DOM/Memory)
@@ -133,10 +160,20 @@ popup.js (Streamlined Interface)
 1. User navigates to interesting webpage
 2. Optionally selects text on page
 3. Opens popup (tags pre-filled if previously used)
-4. Optionally modifies tags
+4. Optionally modifies tags or description
 5. Clicks "Send URL"
 6. Receives success/error feedback
 7. Popup automatically closes on success
+
+#### AI Description Generation Flow
+1. User navigates to interesting webpage
+2. Optionally selects text on page
+3. Opens popup
+4. Clicks "Generate description" button (only visible if AI Remote URL is configured)
+5. Request is sent to the AI service
+6. Receives generated description in the description field
+7. User can edit the description if needed
+8. User clicks "Send URL" to complete the process
 
 ## Error Handling
 

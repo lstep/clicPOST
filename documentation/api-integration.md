@@ -4,6 +4,10 @@
 
 This guide provides comprehensive information for developers who want to create server endpoints that integrate with the clicPOST Chrome extension. The extension sends webpage data via HTTP POST requests to user-configured server endpoints, enabling flexible server-side processing and integration with various services.
 
+The extension supports two types of endpoints:
+1. **Remote Server URL** - For storing and processing webpage data
+2. **AI Remote URL** - For generating descriptions of webpages using AI services
+
 The API follows RESTful principles with JSON payloads and supports custom headers for authentication and additional metadata.
 
 ## API Specification
@@ -14,6 +18,14 @@ The API follows RESTful principles with JSON payloads and supports custom header
 - **Method**: `POST`
 - **Content-Type**: `application/json`
 - **Expected Response**: JSON (recommended) or plain text
+
+### Endpoint Types
+
+#### 1. Remote Server URL
+The primary endpoint for storing and processing webpage data.
+
+#### 2. AI Remote URL
+Optional endpoint for generating descriptions of webpages using AI services. When configured, a "Generate description" button appears in the popup.
 
 #### Request Format
 ```http
@@ -64,13 +76,19 @@ X-Custom-Header: custom-value     # Optional custom headers
     "required": false,
     "description": "Comma-separated tags entered by user",
     "example": "programming, tutorial, chrome"
+  },
+  "generate_description": {
+    "type": "boolean",
+    "required": false,
+    "description": "Flag indicating this is a request to generate a description (only present in AI Remote URL requests)",
+    "example": true
   }
 }
 ```
 
 ### Response Format
 
-#### Success Response (Recommended)
+#### Success Response for Remote Server URL (Recommended)
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json
@@ -80,6 +98,16 @@ Content-Type: application/json
   "message": "Data processed successfully",
   "id": "unique-record-id",          # Optional
   "url": "/view/record/123"          # Optional
+}
+```
+
+#### Success Response for AI Remote URL (Required Format)
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "generated_description": "This is an AI-generated description of the webpage content..."
 }
 ```
 

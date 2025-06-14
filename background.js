@@ -69,8 +69,9 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log('Background received message:', request);
   
-  if (request.action === 'sendUrl') {
-    console.log('Processing sendUrl action');
+  // Handle both sendUrl and generateDescription actions
+  if (request.action === 'sendUrl' || request.action === 'generateDescription') {
+    console.log(`Processing ${request.action} action`);
     const { data, serverUrl, headers } = request;
     
     console.log('Sending POST request to:', serverUrl);

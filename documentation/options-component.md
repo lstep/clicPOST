@@ -18,6 +18,9 @@ This component manages configuration persistence through Chrome storage and prov
 // Example server URL configuration
 serverUrl: "https://your-server.com/api/endpoint"
 
+// Example AI Remote URL configuration (optional)
+aiRemoteUrl: "https://your-ai-service.com/api/generate"
+
 // Example custom headers configuration
 headers: [
   { name: "Authorization", value: "Bearer token123" },
@@ -57,6 +60,7 @@ headers: [
 ```javascript
 {
   serverUrl: string,    // Target server endpoint
+  aiRemoteUrl: string,  // Optional AI service endpoint for description generation
   headers: [            // Array of custom headers
     {
       name: string,     // Header name
@@ -81,6 +85,7 @@ options.js (Configuration Controller)
 
 ### Persistent State (Chrome Storage)
 - **serverUrl**: Stored in `chrome.storage.sync`
+- **aiRemoteUrl**: Stored in `chrome.storage.sync` (optional)
 - **headers**: Array of header objects in `chrome.storage.sync`
 
 ### Transient State (DOM/Memory)
@@ -110,7 +115,8 @@ options.js (Configuration Controller)
 - Status messages provide immediate feedback
 
 #### Error Conditions
-- Missing server URL: Shows error "Please enter a valid URL"
+- Missing server URL: Shows error "Please enter a valid Remote Server URL"
+- AI Remote URL: Optional, no validation error if missing
 - Network failure: N/A (options page doesn't make network requests)
 - Security constraints: Chrome storage may be limited in certain contexts
 
@@ -137,9 +143,10 @@ options.js (Configuration Controller)
 ```javascript
 // Error handling pattern
 if (!serverUrl) {
-  showStatus('Please enter a valid URL', 'error');
+  showStatus('Please enter a valid Remote Server URL', 'error');
   return;
 }
+// Note: AI Remote URL is optional and doesn't trigger validation errors
 ```
 
 ## Performance Considerations
