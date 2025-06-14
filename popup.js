@@ -43,6 +43,12 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
 
+      // Prevent sending chrome:// URLs to the API
+      if (tab.url.startsWith('chrome')) {
+        showStatus('Chrome internal pages cannot be sent to the API', 'error');
+        return;
+      }
+
       try {
         if (!chrome.scripting) {
           console.error('chrome.scripting is not available');
