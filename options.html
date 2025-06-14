@@ -1,12 +1,17 @@
 <!doctype html>
 <html>
     <head>
-        <title>URL Sender Settings</title>
+        <title>clicPOST Settings</title>
         <style>
             body {
-                width: 350px;
-                padding: 10px;
+                width: 500px;
+                margin: 20px auto;
+                padding: 20px;
                 font-family: Arial, sans-serif;
+            }
+            h1 {
+                color: #333;
+                margin-bottom: 20px;
             }
             .form-group {
                 margin-bottom: 15px;
@@ -19,9 +24,11 @@
             input[type="url"],
             input[type="text"] {
                 width: 100%;
-                padding: 5px;
+                padding: 8px;
                 margin-bottom: 10px;
                 box-sizing: border-box;
+                border: 1px solid #ccc;
+                border-radius: 4px;
             }
             .header-row {
                 display: flex;
@@ -37,11 +44,6 @@
                 gap: 5px;
                 margin: 10px 0;
             }
-            .button-container {
-                display: flex;
-                gap: 10px;
-                margin-top: 15px;
-            }
             button {
                 padding: 8px 15px;
                 border: none;
@@ -49,19 +51,12 @@
                 cursor: pointer;
                 color: white;
             }
-            #save {
+            button#save {
                 background-color: #4caf50;
-                flex: 1;
+                margin-top: 15px;
             }
-            #save:hover {
+            button#save:hover {
                 background-color: #45a049;
-            }
-            #sendUrl {
-                background-color: #2196f3;
-                flex: 1;
-            }
-            #sendUrl:hover {
-                background-color: #0b7dda;
             }
             button.remove {
                 background-color: #f44336;
@@ -76,25 +71,23 @@
             button.add:hover {
                 background-color: #0b7dda;
             }
-            button.settings {
-                background-color: #607d8b;
-            }
-            button.settings:hover {
-                background-color: #455a64;
-            }
             #status {
-                margin-top: 10px;
-                padding: 5px;
+                margin-top: 15px;
+                padding: 8px;
+                border-radius: 4px;
+                text-align: center;
                 display: none;
             }
             .success {
-                color: green;
+                background-color: #dff0d8;
+                color: #3c763d;
             }
             .error {
-                color: red;
+                background-color: #f2dede;
+                color: #a94442;
             }
             #headers-container {
-                max-height: 200px;
+                max-height: 300px;
                 overflow-y: auto;
                 border: 1px solid #ddd;
                 padding: 10px;
@@ -104,24 +97,30 @@
         </style>
     </head>
     <body>
-
-
+        <h1>clicPOST Settings</h1>
+        
         <div class="form-group">
-            <label for="tags">Tags (comma-separated):</label>
+            <label for="serverUrl">Remote Server URL:</label>
             <input
-                type="text"
-                id="tags"
-                placeholder="tag1, tag2, tag3"
+                type="url"
+                id="serverUrl"
+                placeholder="https://your-server.com/endpoint"
+                required
             />
         </div>
 
-
-
-        <div class="button-container">
-            <button id="sendUrl">Send URL</button>
-            <button id="openOptions" class="settings">Settings</button>
+        <div class="form-group">
+            <label>Custom Headers:</label>
+            <div id="headers-container"></div>
+            <div class="header-actions">
+                <button id="addHeader" class="add">Add Header</button>
+            </div>
         </div>
+
+        <button id="save">Save Settings</button>
+        
         <div id="status"></div>
-        <script src="popup.js"></script>
+        
+        <script src="options.js"></script>
     </body>
 </html>

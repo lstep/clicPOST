@@ -1,26 +1,18 @@
 document.addEventListener('DOMContentLoaded', function() {
   console.log('Popup loaded');
-  const headersContainer = document.getElementById('headers-container');
   
   // Load saved settings when popup opens
-  chrome.storage.sync.get(['serverUrl', 'headers', 'tags'], function(result) {
+  chrome.storage.sync.get(['tags'], function(result) {
     console.log('Loaded settings:', result);
-    if (result.serverUrl) {
-      document.getElementById('serverUrl').value = result.serverUrl;
-    }
     
     if (result.tags) {
       document.getElementById('tags').value = result.tags;
     }
-    
-    if (result.headers) {
-      result.headers.forEach(header => addHeaderRow(header.name, header.value));
-    }
   });
 
-  // Add header button click handler
-  document.getElementById('addHeader').addEventListener('click', function() {
-    addHeaderRow();
+  // Open options page when settings button is clicked
+  document.getElementById('openOptions').addEventListener('click', function() {
+    chrome.runtime.openOptionsPage();
   });
 
   // Tags input Enter key handler
@@ -36,38 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('sendUrl').click();
   }
 
-  // Save settings button click handler
-  document.getElementById('save').addEventListener('click', function() {
-    const serverUrl = document.getElementById('serverUrl').value;
-    
-    if (!serverUrl) {
-      showStatus('Please enter a valid URL', 'error');
-      return;
-    }
 
-    // Collect all headers
-    const headers = [];
-    const headerRows = document.querySelectorAll('.header-row');
-    headerRows.forEach(row => {
-      const nameInput = row.querySelector('.header-name');
-      const valueInput = row.querySelector('.header-value');
-      if (nameInput.value && valueInput.value) {
-        headers.push({
-          name: nameInput.value,
-          value: valueInput.value
-        });
-      }
-    });
-
-    // Save settings
-    chrome.storage.sync.set({
-      serverUrl: serverUrl,
-      headers: headers,
-      tags: document.getElementById('tags').value
-    }, function() {
-      showStatus('Settings saved successfully!', 'success');
-    });
-  });
 
   // Send URL button click handler
   document.getElementById('sendUrl').addEventListener('click', async function() {
@@ -138,6 +99,9 @@ document.addEventListener('DOMContentLoaded', function() {
           const tags = document.getElementById('tags').value;
           if (tags && tags.trim()) {
             data.tags = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+            
+            // Save tags for future use
+            chrome.storage.sync.set({ tags: tags });
           }
 
           console.log('Sending message to background script with:', {
@@ -156,6 +120,10 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Received response from background:', response);
             if (response && response.success) {
               console.log('Success:', response.data);
+              // Reset the tags input field after successful submission
+              document.getElementById('tags').value = '';
+              // Also clear from storage to ensure it's reset for next popup open
+              chrome.storage.sync.set({ tags: '' });
               showStatus('URL sent successfully!', 'success');
               // Close popup after successful send
               setTimeout(() => window.close(), 500);
@@ -176,35 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-function addHeaderRow(name = '', value = '') {
-  const headersContainer = document.getElementById('headers-container');
-  const headerRow = document.createElement('div');
-  headerRow.className = 'header-row';
-  
-  const nameInput = document.createElement('input');
-  nameInput.type = 'text';
-  nameInput.className = 'header-name';
-  nameInput.placeholder = 'Header Name';
-  nameInput.value = name;
-  
-  const valueInput = document.createElement('input');
-  valueInput.type = 'text';
-  valueInput.className = 'header-value';
-  valueInput.placeholder = 'Header Value';
-  valueInput.value = value;
-  
-  const removeButton = document.createElement('button');
-  removeButton.textContent = '×';
-  removeButton.className = 'remove';
-  removeButton.onclick = function() {
-    headerRow.remove();
-  };
-  
-  headerRow.appendChild(nameInput);
-  headerRow.appendChild(valueInput);
-  headerRow.appendChild(removeButton);
-  headersContainer.appendChild(headerRow);
-}
+
 
 function showStatus(message, type) {
   console.log('Showing status:', message, type);
