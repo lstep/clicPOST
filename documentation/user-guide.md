@@ -23,9 +23,11 @@ clicPOST is a Chrome extension that allows you to easily send webpage informatio
 
 ### Initial Setup
 1. Click the clicPOST icon in your Chrome toolbar
-2. Enter your server URL in the "Server URL" field
-3. Click "Save Settings"
-4. You're ready to start sending webpage data!
+2. Click the "Settings" button to open the options page
+3. Enter your server URL in the "Remote Server URL" field
+4. Add any custom headers if needed
+5. Click "Save Settings"
+6. You're ready to start sending webpage data!
 
 ## Using clicPOST
 
@@ -36,7 +38,7 @@ clicPOST is a Chrome extension that allows you to easily send webpage informatio
 2. **Select text** (optional) if you want to capture specific content
 3. **Click** the clicPOST icon in your toolbar
 4. **Add tags** (optional) for organization
-5. **Click** "Send Selected Text/URL"
+5. **Click** "Send URL"
 6. **Confirm** success with the status message
 
 #### With Text Selection
@@ -67,16 +69,22 @@ clicPOST is a Chrome extension that allows you to easily send webpage informatio
 
 ## Configuration Options
 
+### Accessing Options Page
+There are two ways to access the options page:
+1. Click the clicPOST icon in your toolbar, then click the "Settings" button
+2. Right-click on the clicPOST icon, select "Options"
+
 ### Server URL Setup
 - **Required**: Your server endpoint that will receive the data
 - **Format**: Must be a complete URL (e.g., `https://your-server.com/api/webhook`)
 - **Security**: HTTPS recommended for secure transmission
+- **Location**: Configure in the options page, not the popup
 
 ### Custom Headers
 Custom headers allow you to send additional information with each request, such as authentication tokens or metadata.
 
 #### Adding Headers
-1. Open the clicPOST popup
+1. Open the clicPOST options page
 2. Click "Add Header"
 3. Enter the header name (e.g., "Authorization")
 4. Enter the header value (e.g., "Bearer your-token-123")
@@ -134,8 +142,9 @@ When you send data using clicPOST, your server receives a JSON payload with the 
 **Problem**: You haven't set up a server URL yet.
 **Solution**: 
 1. Click the clicPOST icon
-2. Enter your server URL in the configuration field
-3. Click "Save Settings"
+2. Click the "Settings" button to open the options page
+3. Enter your server URL in the configuration field
+4. Click "Save Settings"
 
 #### "Failed to send data" Error
 **Possible Causes and Solutions**:
@@ -243,9 +252,10 @@ clicPOST requests these Chrome permissions:
 - **Use Abbreviations**: Keep tags short but meaningful
 - **Think Search**: Use tags you'll remember when searching later
 
-### Workflow Optimization
-- **Keyboard Shortcuts**: Consider using the Enter key in tags field for quick sending
-- **Batch Operations**: Send multiple items with consistent tags
+### Smart Workflows
+- **Options Configuration**: Set up your server URL and headers once in the options page
+- **Quick Sending**: Use the simplified popup for daily sending with tags
+- **Keyboard Shortcuts**: Use the Enter key in tags field for quick sending
 - **Regular Review**: Periodically review and organize your saved content
 
 ### Server Setup Tips

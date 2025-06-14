@@ -2,7 +2,7 @@
 
 ## Overview
 
-The popup component (`popup.js`) serves as the primary user interface for the clicPOST Chrome extension. It provides configuration options for server settings, custom headers, and tags, while also enabling users to send webpage data to a configured remote server. The popup appears when users click the extension icon in the Chrome toolbar.
+The popup component (`popup.js`) serves as the streamlined user interface for the clicPOST Chrome extension. It focuses on the primary action of sending webpage data with tags, while configuration options for server settings and custom headers have been moved to a dedicated options page. The popup appears when users click the extension icon in the Chrome toolbar.
 
 This component manages user settings persistence, dynamic header configuration, and provides immediate feedback for user actions through status messages and visual indicators.
 
@@ -12,20 +12,16 @@ This component manages user settings persistence, dynamic header configuration, 
 - Click the clicPOST extension icon in Chrome's toolbar
 - The popup interface will load and display saved settings automatically
 
-### Basic Configuration
+### Basic Usage
 ```javascript
-// Example server URL configuration
-serverUrl: "https://your-server.com/api/endpoint"
-
 // Example tags for categorization
 tags: "important, work, research"
 ```
 
-### Adding Custom Headers
-1. Click "Add Header" button
-2. Enter header name and value
-3. Multiple headers can be added dynamically
-4. Headers are saved with other settings
+### Accessing Options
+1. Click "Settings" button to open the options page
+2. Configure server URL and custom headers in the options page
+3. Settings are saved through the options page
 
 ## API / Props / Parameters
 
@@ -37,13 +33,7 @@ tags: "important, work, research"
 **Returns**: None
 **Usage**: Called when Enter key is pressed in tags input
 
-#### `addHeaderRow(name = '', value = '')`
-**Purpose**: Dynamically adds a new header input row to the interface
-**Parameters**:
-- `name` (string, optional): Pre-filled header name
-- `value` (string, optional): Pre-filled header value
-**Returns**: None
-**Side Effects**: Creates new DOM elements for header input
+
 
 #### `showStatus(message, type)`
 **Purpose**: Displays status messages to the user
@@ -58,15 +48,11 @@ tags: "important, work, research"
 #### Settings Object
 ```javascript
 {
-  serverUrl: string,    // Target server endpoint
-  headers: [            // Array of custom headers
-    {
-      name: string,     // Header name
-      value: string     // Header value
-    }
-  ],
   tags: string         // Comma-separated tags
 }
+
+// Server URL and headers are now configured in the options page
+```
 ```
 
 #### Send Data Payload
@@ -82,35 +68,34 @@ tags: "important, work, research"
 ## Component Hierarchy
 
 ```
-popup.js (Main Controller)
-├── Chrome Storage API (Settings Persistence)
+popup.js (Streamlined Interface)
+├── Chrome Storage API (Tags Persistence)
 ├── Chrome Tabs API (Current Tab Data)
 ├── Chrome Scripting API (Content Script Injection)
-├── HTTP Fetch API (Server Communication)
+├── Chrome Runtime API (Options Page Access)
 └── DOM Manipulation
-    ├── Header Management
-    ├── Settings Form
+    ├── Tags Input
+    ├── Send Button
     └── Status Display
 ```
 
 ## State Management
 
 ### Persistent State (Chrome Storage)
-- **serverUrl**: Stored in `chrome.storage.sync`
-- **headers**: Array of header objects in `chrome.storage.sync`
 - **tags**: Tag string in `chrome.storage.sync`
+- **serverUrl**: Managed by options page, accessed from `chrome.storage.sync`
+- **headers**: Managed by options page, accessed from `chrome.storage.sync`
 
 ### Transient State (DOM/Memory)
-- Current form field values
-- Dynamic header rows
+- Current tags field value
 - Status message display
 - Loading states
 
 ### State Flow
-1. **Load**: Settings loaded from Chrome storage on popup open
-2. **Modify**: User changes form values
-3. **Save**: Settings persisted to Chrome storage
-4. **Send**: Current tab data + settings sent to server
+1. **Load**: Tags loaded from Chrome storage on popup open
+2. **Modify**: User changes tags value
+3. **Send**: Current tab data + settings sent to server
+4. **Save**: Tags persisted to Chrome storage
 5. **Feedback**: Status displayed to user
 
 ## Behavior
@@ -118,15 +103,14 @@ popup.js (Main Controller)
 ### Expected Behavior in Different Scenarios
 
 #### First Use (No Saved Settings)
-- Empty server URL field
-- No headers displayed
 - Empty tags field
-- Save button saves minimal configuration
+- User should configure server URL in options page first
+- Status message will indicate need for server configuration
 
 #### Normal Operation
-- Saved settings auto-populate on popup open
-- Add Header button creates new header rows
+- Saved tags auto-populate on popup open
 - Send button collects all data and sends to server
+- Settings button opens options page for configuration
 - Status messages provide immediate feedback
 
 #### Error Conditions
@@ -139,20 +123,20 @@ popup.js (Main Controller)
 
 #### Configuration Flow
 1. User opens popup
-2. Enters server URL
-3. Optionally adds custom headers
-4. Optionally adds tags
-5. Clicks "Save Settings"
-6. Receives confirmation message
+2. Clicks "Settings" button
+3. Options page opens
+4. User configures server URL and custom headers
+5. Clicks "Save Settings" in options page
+6. Returns to popup for sending operation
 
 #### Send Data Flow
 1. User navigates to interesting webpage
 2. Optionally selects text on page
-3. Opens popup (settings pre-filled)
+3. Opens popup (tags pre-filled if previously used)
 4. Optionally modifies tags
-5. Clicks "Send Selected Text/URL"
+5. Clicks "Send URL"
 6. Receives success/error feedback
-7. Popup remains open for additional actions
+7. Popup automatically closes on success
 
 ## Error Handling
 
@@ -255,12 +239,15 @@ describe('Popup Component', () => {
 ### Direct Dependencies
 - [`background.js`](./background-service.md) - Service worker handling context menu and notifications
 - [`popup.html`](./popup-interface.md) - HTML structure and styling
+- [`options.js`](./options-component.md) - Settings management interface
+- [`options.html`](./options-interface.md) - Options page HTML structure
 - [`manifest.json`](./extension-manifest.md) - Extension configuration
 
 ### Integration Points
-- **Chrome Storage API**: Settings persistence
+- **Chrome Storage API**: Tags persistence
 - **Chrome Tabs API**: Current page data retrieval
 - **Chrome Scripting API**: Content script injection for text selection
+- **Chrome Runtime API**: Options page opening
 - **Remote Server API**: POST endpoint for data transmission
 
 ### Extension Architecture
@@ -269,15 +256,19 @@ User Interface (popup.js) ←→ Background Service (background.js)
          ↓                              ↓
    Chrome Storage API              Context Menu API
          ↓                              ↓
-   Settings Persistence        Alternative Send Method
+ Options Interface (options.js)   Alternative Send Method
+         ↓
+   Settings Configuration
 ```
 
 ## Code Examples
 
-### Adding a Custom Header Programmatically
+### Opening the Options Page
 ```javascript
-// Add a new header row with pre-filled values
-addHeaderRow('Authorization', 'Bearer your-token-here');
+// Open the options page programmatically
+document.getElementById('openOptions').addEventListener('click', function() {
+  chrome.runtime.openOptionsPage();
+});
 ```
 
 ### Handling Custom Server Response
