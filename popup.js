@@ -23,6 +23,19 @@ document.addEventListener('DOMContentLoaded', function() {
     addHeaderRow();
   });
 
+  // Tags input Enter key handler
+  document.getElementById('tags').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      sendUrlAndClose();
+    }
+  });
+
+  // Function to send URL and close popup
+  function sendUrlAndClose() {
+    // Trigger the existing send logic
+    document.getElementById('sendUrl').click();
+  }
+
   // Save settings button click handler
   document.getElementById('save').addEventListener('click', function() {
     const serverUrl = document.getElementById('serverUrl').value;
@@ -144,6 +157,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response && response.success) {
               console.log('Success:', response.data);
               showStatus('URL sent successfully!', 'success');
+              // Close popup after successful send
+              setTimeout(() => window.close(), 500);
             } else {
               console.error('Error:', response ? response.error : 'No response');
               showStatus(response ? response.error : 'Failed to send URL', 'error');
