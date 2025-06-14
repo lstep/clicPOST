@@ -95,6 +95,12 @@ document.addEventListener('DOMContentLoaded', function() {
             data.selected = selectedText;
           }
 
+          // Add description if it exists
+          const description = document.getElementById('description').value;
+          if (description && description.trim()) {
+            data.description = description.trim();
+          }
+
           // Add tags if they exist
           const tags = document.getElementById('tags').value;
           if (tags && tags.trim()) {

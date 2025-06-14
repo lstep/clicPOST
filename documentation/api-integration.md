@@ -26,8 +26,9 @@ X-Custom-Header: custom-value     # Optional custom headers
 {
   "url": "https://example.com/article",
   "title": "Article Title Here",
-  "selected": "User selected text content",  # Optional field
-  "tags": "important, work, research"        # Optional field
+  "description": "Page description",          # Optional field
+  "selected": "User selected text content",   # Optional field
+  "tags": "important, work, research"         # Optional field
 }
 ```
 
@@ -45,6 +46,12 @@ X-Custom-Header: custom-value     # Optional custom headers
     "required": true,
     "description": "Page title from HTML <title> tag",
     "example": "How to Build Chrome Extensions"
+  },
+  "description": {
+    "type": "string",
+    "required": false,
+    "description": "Optional description of the page",
+    "example": "A tutorial about Chrome extension development"
   },
   "selected": {
     "type": "string",
