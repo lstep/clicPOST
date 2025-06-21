@@ -2,6 +2,7 @@
 <html>
     <head>
         <title>URL Sender Settings</title>
+        <meta charset="UTF-8">
         <style>
             body {
                 width: 350px;
@@ -93,6 +94,64 @@
             .error {
                 color: red;
             }
+            /* Tag input styling */
+            .tag-input-container {
+                position: relative;
+                display: flex;
+                flex-wrap: wrap;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                padding: 4px;
+                min-height: 36px;
+                margin-bottom: 10px;
+            }
+            #tag-chips-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+            .tag-chip {
+                background: #e0e0f0;
+                border-radius: 12px;
+                padding: 2px 8px;
+                margin: 2px 0;
+                display: inline-flex;
+                align-items: center;
+            }
+            .tag-chip .remove-tag {
+                margin-left: 4px;
+                cursor: pointer;
+                font-weight: bold;
+                color: #666;
+            }
+            #tag-input {
+                flex: 1;
+                border: none;
+                outline: none;
+                padding: 4px;
+                min-width: 100px;
+            }
+            .tag-suggestions {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                border: 1px solid #aaa;
+                border-radius: 0 0 4px 4px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                max-height: 150px;
+                overflow-y: auto;
+                z-index: 1000;
+                margin-top: 2px;
+            }
+            .tag-suggestion {
+                padding: 6px 8px;
+                cursor: pointer;
+            }
+            .tag-suggestion:hover {
+                background: #f0f0f0;
+            }
             #headers-container {
                 max-height: 200px;
                 overflow-y: auto;
@@ -118,22 +177,13 @@
 
         <div class="form-group">
             <label for="tags">Tags:</label>
-            <div class="tags-input-container">
-                <input
-                    type="text"
-                    id="tags"
-                    placeholder="Enter tags or select from dropdown"
-                    list="tagSuggestions"
-                />
-                <datalist id="tagSuggestions">
-                    <!-- Tag options will be populated from settings -->
-                </datalist>
+            <div class="tag-input-container">
+              <div id="tag-chips-container"></div>
+              <input type="text" id="tag-input" name="tag-input" placeholder="Enter a tag..." />
+              <div id="tag-suggestions" class="tag-suggestions"></div>
             </div>
-            <div class="hint-text" style="font-size: 0.8em; color: #777; margin-top: 3px;">
-                Use comma to separate multiple tags
-            </div>
+            <input type="hidden" id="tags" name="tags" />
         </div>
-
 
 
         <div class="button-container">

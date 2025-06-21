@@ -1,6 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
   console.log('Popup loaded');
   
+  // Store available tags from settings
+  let availableTags = [];
+  // Array to track currently selected tags
+  let selectedTags = [];
+  
+  // DOM elements
+  const tagInput = document.getElementById('tag-input');
+  const tagChipsContainer = document.getElementById('tag-chips-container');
+  const tagSuggestions = document.getElementById('tag-suggestions');
+  const hiddenTagsInput = document.getElementById('tags');
+  
   // Load saved settings when popup opens
   chrome.storage.sync.get(['tags', 'aiRemoteUrl'], function(result) {
     console.log('Loaded settings:', result);
@@ -15,19 +26,183 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Populate tag suggestions from settings
     if (result.tags) {
-      const tagsList = document.getElementById('tagSuggestions');
-      // Clear existing options
-      tagsList.innerHTML = '';
+      // Split the comma-separated tags string
+      availableTags = result.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+      console.log('Available tags:', availableTags);
       
-      // Split the comma-separated tags string and create options
-      const tags = result.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+      // Make sure suggestions are ready after a short delay
+      setTimeout(() => {
+        // This helps ensure the suggestions are ready when needed
+        if (tagSuggestions) {
+          console.log('Preparing suggestions element');
+          tagSuggestions.style.display = 'none';
+        }
+      }, 100);
+    }
+  });
+  
+  // Function to update the hidden input with all selected tags
+  function updateHiddenInput() {
+    hiddenTagsInput.value = selectedTags.join(',');
+    console.log('Updated hidden input with tags:', hiddenTagsInput.value);
+  }
+  
+  // Function to add a tag to the selected tags
+  function addTag(tag) {
+    tag = tag.trim();
+    if (tag && !selectedTags.includes(tag)) {
+      selectedTags.push(tag);
       
-      // Add each tag as an option in the datalist
-      tags.forEach(tag => {
-        const option = document.createElement('option');
-        option.value = tag;
-        tagsList.appendChild(option);
+      // Create the tag chip
+      const tagChip = document.createElement('div');
+      tagChip.className = 'tag-chip';
+      tagChip.innerHTML = `
+        <span>${tag}</span>
+        <span class="remove-tag" data-tag="${tag}">×</span>
+      `;
+      tagChipsContainer.appendChild(tagChip);
+      
+      // Add click handler for remove button
+      tagChip.querySelector('.remove-tag').addEventListener('click', function() {
+        const tagToRemove = this.dataset.tag;
+        selectedTags = selectedTags.filter(t => t !== tagToRemove);
+        tagChip.remove();
+        updateHiddenInput();
       });
+      
+      // Update the hidden input
+      updateHiddenInput();
+      
+      // Clear the input field
+      tagInput.value = '';
+    }
+  }
+  
+  // Function to show suggestions based on input (or show all if no query)
+  function showSuggestions(query = '') {
+    console.log('Showing suggestions for query:', query);
+    console.log('Available tags:', availableTags);
+    console.log('Selected tags:', selectedTags);
+    
+    // Clear suggestions
+    tagSuggestions.innerHTML = '';
+    
+    // Filter available tags based on query or show all if no query
+    const filteredTags = query
+      ? availableTags.filter(tag => 
+          tag.toLowerCase().includes(query.toLowerCase()) && 
+          !selectedTags.includes(tag)
+        )
+      : availableTags.filter(tag => !selectedTags.includes(tag));
+    
+    console.log('Filtered tags to show:', filteredTags);
+    
+    // If no suggestions (all tags are selected or no tags available)
+    if (filteredTags.length === 0) {
+      // If no tags are available at all
+      if (availableTags.length === 0) {
+        const noTagsElement = document.createElement('div');
+        noTagsElement.className = 'tag-suggestion';
+        noTagsElement.textContent = 'No tags available. Add some in settings.';
+        noTagsElement.style.fontStyle = 'italic';
+        noTagsElement.style.color = '#777';
+        tagSuggestions.appendChild(noTagsElement);
+      } else {
+        // All available tags are already selected
+        const allSelectedElement = document.createElement('div');
+        allSelectedElement.className = 'tag-suggestion';
+        allSelectedElement.textContent = 'All available tags are selected';
+        allSelectedElement.style.fontStyle = 'italic';
+        allSelectedElement.style.color = '#777';
+        tagSuggestions.appendChild(allSelectedElement);
+      }
+    } else {
+      // Add suggestions to the dropdown
+      filteredTags.forEach(tag => {
+        const suggestionElement = document.createElement('div');
+        suggestionElement.className = 'tag-suggestion';
+        suggestionElement.textContent = tag;
+        suggestionElement.addEventListener('click', function() {
+          addTag(tag);
+          // Keep suggestions open after selecting
+          setTimeout(() => showSuggestions(), 10);
+        });
+        tagSuggestions.appendChild(suggestionElement);
+      });
+    }
+    
+    // Always show suggestions
+    tagSuggestions.style.display = 'block';
+    console.log('Set suggestions display to:', tagSuggestions.style.display);
+  }
+  
+  // Input event handlers
+  tagInput.addEventListener('input', function() {
+    const query = this.value.trim();
+    showSuggestions(query);
+  });
+  
+  // Show all tags when input is focused
+  tagInput.addEventListener('focus', function() {
+    console.log('Input focused');
+    showSuggestions();
+    // Force display visibility
+    setTimeout(() => {
+      tagSuggestions.style.display = 'block';
+      console.log('Forced suggestions visibility on focus');
+    }, 50);
+  });
+  
+  // Also show all tags when clicked
+  tagInput.addEventListener('click', function() {
+    console.log('Input clicked');
+    showSuggestions();
+    // Force display visibility
+    setTimeout(() => {
+      tagSuggestions.style.display = 'block';
+      console.log('Forced suggestions visibility on click');
+    }, 50);
+  });
+  
+  // Direct click handler on the container to ensure it works
+  document.querySelector('.tag-input-container').addEventListener('click', function() {
+    console.log('Container clicked');
+    // Focus the input
+    tagInput.focus();
+    // Show suggestions with slight delay
+    setTimeout(() => {
+      showSuggestions();
+      tagSuggestions.style.display = 'block';
+      console.log('Forced suggestions visibility on container click');
+    }, 50);
+  });
+  
+  // Handle keyboard events for tag input
+  tagInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      const value = this.value.trim();
+      if (value) {
+        addTag(value);
+        tagSuggestions.style.display = 'none';
+      }
+    } else if (e.key === 'Escape') {
+      tagSuggestions.style.display = 'none';
+    }
+  });
+  
+  // Handle click outside to close suggestions
+  document.addEventListener('click', function(e) {
+    if (!tagInput.contains(e.target) && !tagSuggestions.contains(e.target)) {
+      tagSuggestions.style.display = 'none';
+    }
+  });
+  
+  // Focus input when clicking on the container
+  document.querySelector('.tag-input-container').addEventListener('click', function(e) {
+    // Only focus if clicking the container itself, not a chip or button within it
+    if (e.target === this) {
+      tagInput.focus();
     }
   });
 
@@ -277,8 +452,12 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Received response from background:', response);
             if (response && response.success) {
               console.log('Success:', response.data);
-              // Reset the tags input field after successful submission without affecting saved tags in settings
+              // Reset the tags input field and clear tag chips after successful submission
               document.getElementById('tags').value = '';
+              // Clear the tag chips container
+              tagChipsContainer.innerHTML = '';
+              // Clear selected tags array
+              selectedTags = [];
               showStatus('URL sent successfully!', 'success');
               // Close popup after successful send
               setTimeout(() => window.close(), 500);

@@ -95,6 +95,20 @@ tags: "important, work, research"
 }
 ```
 
+## Character Encoding
+
+The popup uses UTF-8 character encoding to ensure proper display of special characters:
+
+```html
+<meta charset="UTF-8">
+```
+
+This encoding declaration is critical for proper rendering of special characters used in the UI, such as:
+- The remove button (×) in tag chips
+- Any non-ASCII characters in descriptions, tags, or page content
+
+Without proper character encoding, special characters may display incorrectly (e.g., "×" appearing as "Ã—").
+
 ## Component Hierarchy
 
 ```
