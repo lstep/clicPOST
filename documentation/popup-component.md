@@ -14,12 +14,19 @@ This component manages user settings persistence, dynamic header configuration, 
 
 ### Basic Usage
 ```javascript
-// Example tags for categorization
+// Using tag suggestions from dropdown
+// Tags can be selected from suggestions or entered manually
 tags: "important, work, research"
 
 // AI-generated descriptions
 // If AI Remote URL is configured in options, a "Generate description" button will appear
 ```
+
+### Using the Tags Input
+1. Click on the tags input field to see available tag suggestions from settings
+2. Select an existing tag from the dropdown or type your own
+3. Use commas to separate multiple tags
+4. Tags entered in the popup don't affect your saved tags in settings
 
 ### Accessing Options
 1. Click "Settings" button to open the options page

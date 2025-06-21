@@ -117,12 +117,21 @@
         </div>
 
         <div class="form-group">
-            <label for="tags">Tags (comma-separated):</label>
-            <input
-                type="text"
-                id="tags"
-                placeholder="tag1, tag2, tag3"
-            />
+            <label for="tags">Tags:</label>
+            <div class="tags-input-container">
+                <input
+                    type="text"
+                    id="tags"
+                    placeholder="Enter tags or select from dropdown"
+                    list="tagSuggestions"
+                />
+                <datalist id="tagSuggestions">
+                    <!-- Tag options will be populated from settings -->
+                </datalist>
+            </div>
+            <div class="hint-text" style="font-size: 0.8em; color: #777; margin-top: 3px;">
+                Use comma to separate multiple tags
+            </div>
         </div>
 
 

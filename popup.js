@@ -5,16 +5,29 @@ document.addEventListener('DOMContentLoaded', function() {
   chrome.storage.sync.get(['tags', 'aiRemoteUrl'], function(result) {
     console.log('Loaded settings:', result);
     
-    if (result.tags) {
-      document.getElementById('tags').value = result.tags;
-    }
-    
     // Show Generate description button only if AI Remote URL is configured
     const generateDescriptionButton = document.getElementById('generateDescription');
     if (result.aiRemoteUrl) {
       generateDescriptionButton.style.display = 'block';
     } else {
       generateDescriptionButton.style.display = 'none';
+    }
+    
+    // Populate tag suggestions from settings
+    if (result.tags) {
+      const tagsList = document.getElementById('tagSuggestions');
+      // Clear existing options
+      tagsList.innerHTML = '';
+      
+      // Split the comma-separated tags string and create options
+      const tags = result.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+      
+      // Add each tag as an option in the datalist
+      tags.forEach(tag => {
+        const option = document.createElement('option');
+        option.value = tag;
+        tagsList.appendChild(option);
+      });
     }
   });
 
@@ -241,10 +254,11 @@ document.addEventListener('DOMContentLoaded', function() {
           // Add tags if they exist
           const tags = document.getElementById('tags').value;
           if (tags && tags.trim()) {
-            data.tags = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+            // Process and clean up tags
+            const processedTags = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+            data.tags = processedTags;
             
-            // Save tags for future use
-            chrome.storage.sync.set({ tags: tags });
+            // Don't save to storage on send - we use the settings page for managing saved tags
           }
 
           console.log('Sending message to background script with:', {
@@ -263,10 +277,8 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Received response from background:', response);
             if (response && response.success) {
               console.log('Success:', response.data);
-              // Reset the tags input field after successful submission
+              // Reset the tags input field after successful submission without affecting saved tags in settings
               document.getElementById('tags').value = '';
-              // Also clear from storage to ensure it's reset for next popup open
-              chrome.storage.sync.set({ tags: '' });
               showStatus('URL sent successfully!', 'success');
               // Close popup after successful send
               setTimeout(() => window.close(), 500);
