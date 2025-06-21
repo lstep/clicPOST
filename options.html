@@ -22,7 +22,8 @@
                 font-weight: bold;
             }
             input[type="url"],
-            input[type="text"] {
+            input[type="text"],
+            textarea {
                 width: 100%;
                 padding: 8px;
                 margin-bottom: 10px;
@@ -64,6 +65,10 @@
             }
             button.remove:hover {
                 background-color: #da190b;
+            }
+            textarea {
+                resize: vertical;
+                min-height: 60px;
             }
             button.add {
                 background-color: #2196f3;
@@ -116,6 +121,15 @@
                 id="aiRemoteUrl"
                 placeholder="https://your-ai-service.com/endpoint"
             />
+        </div>
+
+        <div class="form-group">
+            <label for="tags">Tags (comma-separated):</label>
+            <textarea
+                id="tags"
+                placeholder="important, work, research"
+                rows="3"
+            ></textarea>
         </div>
 
         <div class="form-group">

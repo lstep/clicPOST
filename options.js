@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const headersContainer = document.getElementById('headers-container');
   
   // Load saved settings when options page opens
-  chrome.storage.sync.get(['serverUrl', 'aiRemoteUrl', 'headers'], function(result) {
+  chrome.storage.sync.get(['serverUrl', 'aiRemoteUrl', 'headers', 'tags'], function(result) {
     console.log('Loaded settings:', result);
     if (result.serverUrl) {
       document.getElementById('serverUrl').value = result.serverUrl;
@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (result.aiRemoteUrl) {
       document.getElementById('aiRemoteUrl').value = result.aiRemoteUrl;
+    }
+    
+    if (result.tags) {
+      document.getElementById('tags').value = result.tags;
     }
     
     if (result.headers) {
@@ -27,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('save').addEventListener('click', function() {
     const serverUrl = document.getElementById('serverUrl').value;
     const aiRemoteUrl = document.getElementById('aiRemoteUrl').value;
+    const tags = document.getElementById('tags').value;
     
     if (!serverUrl) {
       showStatus('Please enter a valid Remote Server URL', 'error');
@@ -51,6 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
     chrome.storage.sync.set({
       serverUrl: serverUrl,
       aiRemoteUrl: aiRemoteUrl,
+      tags: tags,
       headers: headers
     }, function() {
       showStatus('Settings saved successfully!', 'success');

@@ -21,6 +21,9 @@ serverUrl: "https://your-server.com/api/endpoint"
 // Example AI Remote URL configuration (optional)
 aiRemoteUrl: "https://your-ai-service.com/api/generate"
 
+// Example tags configuration (optional, comma-separated)
+tags: "important, work, research"
+
 // Example custom headers configuration
 headers: [
   { name: "Authorization", value: "Bearer token123" },
@@ -61,6 +64,7 @@ headers: [
 {
   serverUrl: string,    // Target server endpoint
   aiRemoteUrl: string,  // Optional AI service endpoint for description generation
+  tags: string,         // Optional comma-separated list of default tags
   headers: [            // Array of custom headers
     {
       name: string,     // Header name
@@ -77,6 +81,7 @@ options.js (Configuration Controller)
 ├── Chrome Storage API (Settings Persistence)
 └── DOM Manipulation
     ├── Server URL Input
+    ├── Tags Textarea
     ├── Header Management
     └── Status Display
 ```
@@ -86,12 +91,13 @@ options.js (Configuration Controller)
 ### Persistent State (Chrome Storage)
 - **serverUrl**: Stored in `chrome.storage.sync`
 - **aiRemoteUrl**: Stored in `chrome.storage.sync` (optional)
+- **tags**: Comma-separated string of tags in `chrome.storage.sync` (optional)
 - **headers**: Array of header objects in `chrome.storage.sync`
 
 ### Transient State (DOM/Memory)
 - Current form field values
 - Dynamic header rows
-- Status message display
+- Tags textarea value
 
 ### State Flow
 1. **Load**: Settings loaded from Chrome storage on options page open
