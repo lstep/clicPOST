@@ -2,19 +2,33 @@
   "manifest_version": 3,
   "name": "URL Sender",
   "version": "1.0",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "url-sender@example.com",
+      "strict_min_version": "109.0"
+    }
+  },
   "permissions": ["tabs", "storage", "activeTab", "scripting", "contextMenus"],
   "background": {
-    "service_worker": "background.js"
+    "scripts": ["background.js"]
   },
   "action": {
     "default_popup": "popup.html",
-    "default_icon": "icon.png"
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
   },
-  "options_page": "options.html",
+  "options_ui": {
+    "page": "options.html",
+    "browser_style": false,
+    "open_in_tab": true
+  },
   "icons": {
-    "16": "icon.png",
-    "48": "icon.png",
-    "128": "icon.png"
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
   },
   "host_permissions": [
     "<all_urls>"

@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const hiddenTagsInput = document.getElementById('tags');
   
   // Load saved settings when popup opens
-  chrome.storage.sync.get(['tags', 'aiRemoteUrl'], function(result) {
+  chrome.storage.local.get(['tags', 'aiRemoteUrl'], function(result) {
     console.log('Loaded settings:', result);
     
     // Show Generate description button only if AI Remote URL is configured
@@ -56,10 +56,17 @@ document.addEventListener('DOMContentLoaded', function() {
       // Create the tag chip
       const tagChip = document.createElement('div');
       tagChip.className = 'tag-chip';
-      tagChip.innerHTML = `
-        <span>${tag}</span>
-        <span class="remove-tag" data-tag="${tag}">×</span>
-      `;
+      // Create tag text element
+      const tagText = document.createElement('span');
+      tagText.textContent = tag;
+      tagChip.appendChild(tagText);
+      
+      // Create remove button
+      const removeButton = document.createElement('span');
+      removeButton.className = 'remove-tag';
+      removeButton.setAttribute('data-tag', tag);
+      removeButton.textContent = '×';
+      tagChip.appendChild(removeButton);
       tagChipsContainer.appendChild(tagChip);
       
       // Add click handler for remove button
@@ -237,22 +244,24 @@ document.addEventListener('DOMContentLoaded', function() {
           return;
         }
 
-        // Get selected text from the tab
-        const results = await chrome.scripting.executeScript({
-          target: { tabId: tab.id },
-          function: () => window.getSelection().toString()
-        });
-
-        if (!results || results.length === 0) {
+        // Get selected text (works in Chrome and Firefox)
+        let selectedText = '';
+        if (chrome.scripting && chrome.scripting.executeScript) {
+          const res = await chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            func: () => window.getSelection().toString()
+          });
+          selectedText = res?.[0]?.result || '';
+        }
+        console.log('Using scripting API for text selection');
+        console.log('Selected text:', selectedText);
+        if (selectedText === undefined) {
           showStatus('Failed to get selected text', 'error');
           return;
         }
 
-        const [{ result: selectedText }] = results;
-        console.log('Selected text:', selectedText);
-
         // Get saved settings
-        chrome.storage.sync.get(['aiRemoteUrl', 'headers', 'tags'], function(result) {
+        chrome.storage.local.get(['aiRemoteUrl', 'headers', 'tags'], function(result) {
           console.log('Retrieved settings for AI generation:', result);
           
           if (!result.aiRemoteUrl) {
@@ -375,22 +384,24 @@ document.addEventListener('DOMContentLoaded', function() {
           return;
         }
 
-        // Get selected text from the tab
-        const results = await chrome.scripting.executeScript({
-          target: { tabId: tab.id },
-          function: () => window.getSelection().toString()
-        });
-
-        if (!results || results.length === 0) {
+        // Get selected text (works in Chrome and Firefox)
+        let selectedText = '';
+        if (chrome.scripting && chrome.scripting.executeScript) {
+          const res = await chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            func: () => window.getSelection().toString()
+          });
+          selectedText = res?.[0]?.result || '';
+        }
+        console.log('Using scripting API for text selection');
+        console.log('Selected text:', selectedText);
+        if (selectedText === undefined) {
           showStatus('Failed to get selected text', 'error');
           return;
         }
 
-        const [{ result: selectedText }] = results;
-        console.log('Selected text:', selectedText);
-
         // Get saved settings
-        chrome.storage.sync.get(['serverUrl', 'headers', 'tags'], function(result) {
+        chrome.storage.local.get(['serverUrl', 'headers', 'tags'], function(result) {
           console.log('Retrieved settings for sending:', result);
           
           if (!result.serverUrl) {

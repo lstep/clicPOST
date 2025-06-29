@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const headersContainer = document.getElementById('headers-container');
   
   // Load saved settings when options page opens
-  chrome.storage.sync.get(['serverUrl', 'aiRemoteUrl', 'headers', 'tags'], function(result) {
+  chrome.storage.local.get(['serverUrl', 'aiRemoteUrl', 'headers', 'tags'], function(result) {
     console.log('Loaded settings:', result);
     if (result.serverUrl) {
       document.getElementById('serverUrl').value = result.serverUrl;
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Save settings
-    chrome.storage.sync.set({
+    chrome.storage.local.set({
       serverUrl: serverUrl,
       aiRemoteUrl: aiRemoteUrl,
       tags: tags,

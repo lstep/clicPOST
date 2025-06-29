@@ -1,3 +1,6 @@
+if (typeof importScripts === 'function') {
+  importScripts('browser-polyfill.min.js');
+}
 console.log('Background script loaded');
 
 // Create context menu item
@@ -13,7 +16,7 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === 'sendToServer') {
     // Get saved settings
-    chrome.storage.sync.get(['serverUrl', 'headers'], function(result) {
+    chrome.storage.local.get(['serverUrl', 'headers'], function(result) {
       if (!result.serverUrl) {
         console.error('Server URL not configured');
         return;
